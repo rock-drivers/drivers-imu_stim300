@@ -14,7 +14,9 @@ STIM300Driver::STIM300Driver()
 
     this->currentP = reinterpret_cast<struct packet *>(this->buffer);
     
-    this->inertial_values.counter = std::numeric_limits<double>::quiet_NaN();
+    this->prev_counter = std::numeric_limits<double>::quiet_NaN();
+    
+    this->inertial_values.counter = 0;
     this->inertial_values.acc[0] = std::numeric_limits<double>::quiet_NaN();
     this->inertial_values.acc[1] = std::numeric_limits<double>::quiet_NaN();
     this->inertial_values.acc[2] = std::numeric_limits<double>::quiet_NaN();
@@ -41,7 +43,7 @@ void STIM300Driver::getInfo()
     std::cout<<"Baudrate: "<<this->baudrate <<"\n";
     std::cout<<"Datagram content: "<<this->content <<"\n";
     std::cout<<"Current mode (Automata): "<<this->modes <<"\n";
-    printf ("Datagram counter: %X\n", this->inertial_values.counter);
+    printf ("Datagram counter: %X Package counter: %d (%X)\n", this->currentP->counter, this->inertial_values.counter, this->inertial_values.counter);
     printf ("Gyros Status: %X\n", this->currentP->gyros_status);
     std::cout<<"Gyros[rad/s]: "<<this->inertial_values.gyro[0]<<" "<<this->inertial_values.gyro[1]<<" "<<this->inertial_values.gyro[2]<<"\n";
     printf ("Acc Status: %X\n", this->currentP->acc_status);
@@ -50,6 +52,12 @@ void STIM300Driver::getInfo()
     std::cout<<"Incl[m/s^2]: "<<this->inertial_values.incl[0]<<" "<<this->inertial_values.incl[1]<<" "<<this->inertial_values.incl[2]<<"\n";
     std::cout<<"Temperature[Celsius]: "<<this->inertial_values.temp[0]<<" "<<this->inertial_values.temp[1]<<" "<<this->inertial_values.temp[2]<<"\n";
     std::cout<<"Latency[microsecond]: "<<this->inertial_values.latency<<"\n";
+}
+
+
+bool STIM300Driver::getStatus()
+{
+    return ~internal_error;
 }
 
 
@@ -68,7 +76,7 @@ void STIM300Driver::welcome()
 
 bool STIM300Driver::open(const std::string& filename)
 {
-    if (! Driver::openSerial(filename, 921600))
+    if (! Driver::openSerial(filename, this->baudrate))
         return false;
     return true;
 }
@@ -77,10 +85,6 @@ bool STIM300Driver::setBaudrate(int brate)
 {
 
     this->baudrate = brate;
-    
-    // switch to current baudrate
-    if(! setSerialBaudrate(baudrate))
-	return ERROR;
     
     return OK;
 }
@@ -128,7 +132,7 @@ int STIM300Driver::extractPacket(const uint8_t* buffer, size_t buffer_size) cons
    if (this->modes == NORMAL)
    {
     
-    for ( int i=0; i < (int)buffer_size; i++)
+    for (unsigned int i=0; i < (unsigned int)buffer_size; i++)
     {
 	switch(packet_state)
 	{
@@ -213,13 +217,20 @@ int STIM300Driver::processPacket()
         
     if (this->modes == NORMAL)
     {
-	    if ((this->currentP->acc_status + this->currentP->gyros_status + this->currentP->incl_status) == 0)
-	    {
-		
+// 	    if ((this->currentP->acc_status + this->currentP->gyros_status + this->currentP->incl_status) == 0)
+// 	    {
+// 		
 		this->internal_error = false;
 		
 		/** If everything is alright convert the values **/
-		this->inertial_values.counter = this->currentP->counter;
+		if (prev_counter == std::numeric_limits<double>::quiet_NaN())
+		    prev_counter = this->currentP->counter;
+		else
+		{
+		    this->inertial_values.counter += (this->currentP->counter - prev_counter)% 0x07;
+		    prev_counter = this->currentP->counter;
+		}
+		
 		
 		this->inertial_values.gyro[0] = convertGyro2AngularRate((this->buffer+1));
 		this->inertial_values.gyro[1] = convertGyro2AngularRate((this->buffer+4));
@@ -227,20 +238,23 @@ int STIM300Driver::processPacket()
 		
 		if (acc_output == ACCELERATION)
 		{
-		    this->inertial_values.acc[0] = convertAcc2Acceleration((buffer+11));
-		    this->inertial_values.acc[1] = convertAcc2Acceleration((buffer+14));
-		    this->inertial_values.acc[2] = convertAcc2Acceleration((buffer+17));
+		    /** The negative value is because there coordinate frame is worng internaly in the driver **/
+		    this->inertial_values.acc[0] = -convertAcc2Acceleration((buffer+11));
+		    this->inertial_values.acc[1] = -convertAcc2Acceleration((buffer+14));
+		    this->inertial_values.acc[2] = -convertAcc2Acceleration((buffer+17));
 		}
 		else if (acc_output == INCREMENTAL_VELOCITY)
 		{
-		    this->inertial_values.acc[0] = convertAcc2IncreVel((buffer+11));
-		    this->inertial_values.acc[1] = convertAcc2IncreVel((buffer+14));
-		    this->inertial_values.acc[2] = convertAcc2IncreVel((buffer+17));
+		    /** The negative value is because there coordinate frame is worng internaly in the driver **/
+		    this->inertial_values.acc[0] = -convertAcc2IncreVel((buffer+11));
+		    this->inertial_values.acc[1] = -convertAcc2IncreVel((buffer+14));
+		    this->inertial_values.acc[2] = -convertAcc2IncreVel((buffer+17));
 		}
 		
-		this->inertial_values.incl[0] = convertIncl2Acceleration((buffer+21));
-		this->inertial_values.incl[1] = convertIncl2Acceleration((buffer+24));
-		this->inertial_values.incl[2] = convertIncl2Acceleration((buffer+27));
+		/** The negative value is because there coordinate frame is worng internaly in the driver **/
+		this->inertial_values.incl[0] = -convertIncl2Acceleration((buffer+21));
+		this->inertial_values.incl[1] = -convertIncl2Acceleration((buffer+24));
+		this->inertial_values.incl[2] = -convertIncl2Acceleration((buffer+27));
 		
 		this->inertial_values.temp[0] = convertTemp2Celsius((buffer+31));
 		this->inertial_values.temp[1] = convertTemp2Celsius((buffer+33));
@@ -249,14 +263,14 @@ int STIM300Driver::processPacket()
 		this->inertial_values.latency = convertLatency2Microseconds((buffer+39));
 		
 		return OK;
-	    }
-	    else
-	    {
-		std::cout<<"ERROR IN INTERNAL DATA\n";
-		this->internal_error = true;
-		this->fullReset();
-		
-	    }
+// 	    }
+// 	    else
+// 	    {
+// 		std::cout<<"ERROR IN INTERNAL DATA\n";
+// 		this->internal_error = true;
+// 		this->fullReset();
+// 		
+// 	    }
     }
     else if (this->modes == SERVICE)
     {
@@ -414,9 +428,9 @@ bool STIM300Driver::fullReset()
     std::cout<<"IN FULL RESET\n";
     if (this->modes == NORMAL)
     {
-	uint8_t reset[3] = "R\r";
-// 	std::string reset ("R\");
-// 	uint8_t* ptr_cmd = (uint8_t*) &reset;
+	uint8_t reset[2];
+	reset[0] = 'R';
+	reset[1] = '\r';
 
 	std::cout<<"SEND R COMMAND IN NORMAL MODE\n";
 	Driver::writePacket(reset, sizeof(reset), 0);
@@ -425,8 +439,11 @@ bool STIM300Driver::fullReset()
     }
     else if (this->modes == SERVICE)
     {
-// 	std::string reset ("x n\n");
-	uint8_t reset[5] = "x n\r";
+	uint8_t reset[4];
+	reset[0] = 'x';
+	reset[1] = ' ';
+	reset[2] = 'n';
+	reset[3] = '\r';
 	uint8_t* ptr_cmd = (uint8_t*) &reset;
 
 	std::cout<<"SEND x n COMMAND IN SERVICE MODE (RETURN TO NORMAL MODE)\n";
@@ -442,11 +459,23 @@ bool STIM300Driver::enterServiceMode()
 {
     if (this->modes == NORMAL)
     {
-	uint8_t command[13] = "SERVICEMODE\r";
-// 	uint8_t* ptr_cmd = (uint8_t*) &reset;
+	uint8_t command[12];
+	command[0] = 'S';
+	command[1] = 'E';
+	command[2] = 'R';
+	command[3] = 'V';
+	command[4] = 'I';
+	command[5] = 'C';
+	command[6] = 'E';
+	command[7] = 'M';
+	command[8] = 'O';
+	command[9] = 'D';
+	command[10] = 'E';
+	command[11] = '\r';
 
 	std::cout<<"ENTERING IN SERVICEMODE\r";
 	Driver::writePacket(command, sizeof(command), 0);
+	usleep (1);
 	this->modes = SERVICE;
 	
 	return true;
@@ -468,23 +497,40 @@ bool STIM300Driver::setAcctoIncrementalVelocity()
     
     if (this->modes == SERVICE)
     {
-	std::string command ("u a,1\r");
-	uint8_t* ptr_cmd = (uint8_t*) &command;
+	uint8_t command[6];
+	command[0] = 'u';
+	command[1] = ' ';
+	command[2] = 'a';
+	command[3] = ',';
+	command[4] = '1';
+	command[5] = '\r';
+// 	uint8_t* ptr_cmd = (uint8_t*) &command;
 
 	std::cout<<"SETTING ACC-INCREMENTAL VELOCITY\n";
-	Driver::writePacket(ptr_cmd, sizeof(command), 0);
+	Driver::writePacket(command, sizeof(command), 0);
+	sleep (1);
 	this->processPacket();
+	usleep (80000);
 	
 	
 	
 	std::cout<<"EXIT FROM SERVICE MODE\n";
-	command= "x n\r";
-	Driver::writePacket(ptr_cmd, sizeof(command), 0);
+	uint8_t exit[4];
+	exit[0] = 'x';
+	exit[1] = ' ';
+	exit[2] = 'n';
+	exit[3] = '\r';
+	Driver::writePacket(exit, sizeof(exit), 0);
+	sleep (1);
 	this->processPacket();
+	usleep (80000);
 	
 	
-	command = ("Y\r");
-	Driver::writePacket(ptr_cmd, sizeof(command), 0);
+	uint8_t confirmation[2];
+	confirmation[0] = 'Y';
+	confirmation[1] = '\r';
+	Driver::writePacket(confirmation, sizeof(confirmation), 0);
+	sleep (5);
 	this->acc_output = INCREMENTAL_VELOCITY;
 	
 	
@@ -495,6 +541,33 @@ bool STIM300Driver::setAcctoIncrementalVelocity()
     
     return false;
 
+}
+
+Eigen::Vector3d STIM300Driver::getAccData ()
+{
+    return Eigen::Vector3d (this->inertial_values.acc[0], this->inertial_values.acc[1], this->inertial_values.acc[2]);
+}
+
+Eigen::Vector3d STIM300Driver::getGyroData()
+{
+    return Eigen::Vector3d (this->inertial_values.gyro[0], this->inertial_values.gyro[1], this->inertial_values.gyro[2]);
+}
+
+Eigen::Vector3d STIM300Driver::getInclData()
+{
+    return Eigen::Vector3d (this->inertial_values.incl[0], this->inertial_values.incl[1], this->inertial_values.incl[2]);
+}
+
+
+Eigen::Vector3d STIM300Driver::getTempData()
+{
+    return Eigen::Vector3d (this->inertial_values.temp[0], this->inertial_values.temp[1], this->inertial_values.temp[2]);
+}
+
+
+int STIM300Driver::getPacketCounter()
+{
+    return (int) this->inertial_values.counter;
 }
 
 

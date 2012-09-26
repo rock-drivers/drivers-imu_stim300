@@ -6,6 +6,7 @@
 #include <string>
 #include <boost/crc.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
+#include <Eigen/Geometry> 
 #include <iodrivers_base/Driver.hpp>
 
 namespace stim300
@@ -34,7 +35,7 @@ namespace stim300
 	/** Accelerometers Type output **/
 	enum ACC_OUTPUT{ACCELERATION, INCREMENTAL_VELOCITY, AVG_ACCELERATION}; // By default it is ACCELERATION but others are possible(read the manual)
 			
-	typedef struct packet
+	struct packet
 	{
 	    uint8_t content;
 	    signed gyro_x:24;
@@ -85,15 +86,19 @@ namespace stim300
 	    static const double STIM300_GRAVITY = 9.80665; // Internal definition of the standard gravity in the STIM300 
 
 	    int	baudrate; /** Packager baud rate **/
+	    uint8_t prev_counter; /** Counter is incremented by 9 units; Here the previous to the current packge is saved **/
 	    uint8_t buffer[MAX_PACKET_SIZE]; /** Buffer with the current packeg **/
-	    bool internal_error; /** If Acc, Gyros or Incl report error it would be true (false by default)**/
 	    packet *currentP; /** Pointer to the current packet (to buffer) **/
 	    sensor_values inertial_values; /** Struct with the processes STIM300 values **/
 	    STIM300_MODES modes; /** The three states of the automata of the STIM300 **/
 	    DATAGRAM_CONTENT content; /** Content of the datagram (package) configuration NOTE: So far only RATE_ACC_INCLI_TEMP is implemented **/
 	    ACC_OUTPUT acc_output; /** Type of values returned by the STIM300. By defaults it is Acceleration in m/s^2 **/
+	    bool internal_error; /** If Acc, Gyros or Incl report error it would be true (false by default)**/
 
 	public: 
+	    
+	    static const unsigned int DEFAULT_SAMPLING_FREQUENCY = 125;
+	    
 	    STIM300Driver();
 	    ~STIM300Driver();
 	    
@@ -132,6 +137,33 @@ namespace stim300
 	     * It always returns to a NORMAL mode after changing the Accelerometers output
 	     */
 	    bool setAcctoIncrementalVelocity();
+	    
+	    /** \brief Return the STIM300 internal status
+	     * Return the negation value of the internal_error variable
+	     */
+	    bool getStatus();
+	    
+	    /** \brief Return the Incremental counter
+	     * Return the value of the value of the counter in inertial_values
+	     */
+	    int getPacketCounter();
+	    
+	    /** \brief Return the Accelerometers values
+	     */
+	    Eigen::Vector3d getAccData ();
+	    
+	    /** \brief Return the Gyroscopes values
+	     */
+	    Eigen::Vector3d getGyroData ();
+	    
+	    /** \brief Return the Inclinometers values
+	     */
+	    Eigen::Vector3d getInclData ();
+	    
+	    /** \brief Return the Temperature values
+	     */
+	    Eigen::Vector3d getTempData ();
+	    
 	    
 	    /**
 	    * Print a welcome to stdout

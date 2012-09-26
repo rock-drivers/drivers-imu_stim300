@@ -277,6 +277,8 @@ int main(int argc, char** argv)
     
     myDriver.welcome();
     
+    myDriver.setBaudrate(921600);
+    
 
     if (!myDriver.open(argv[1]))
     {
