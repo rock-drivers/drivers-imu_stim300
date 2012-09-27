@@ -1,6 +1,8 @@
 #include "stim300.hpp"
 
-using namespace stim300;
+namespace stim300
+{
+
 
 
 STIM300Driver::STIM300Driver()
@@ -121,7 +123,7 @@ int STIM300Driver::extractPacket(const uint8_t* buffer, size_t buffer_size) cons
 //      printf("Checksum: %X \n", crc_32.checksum());
 //     
     int packet_state = 0; //0-> no synchronized, 1->Semi synchonized, 2-> package found, 3-> package found and CRC-Ok
-    unsigned short start_position;
+    unsigned short start_position = 0;
     boost::crc_32_type crc_32;
     
 //     std::cout<<"**** extractPacket ****\n";
@@ -593,4 +595,6 @@ double STIM300Driver::getTempDataZ()
 {
 
     return this->inertial_values.temp[2];
+}
+
 }

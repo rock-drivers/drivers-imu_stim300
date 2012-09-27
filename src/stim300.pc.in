@@ -7,7 +7,6 @@ Name: @TARGET_NAME@
 Description: @PROJECT_DESCRIPTION@
 Version: @PROJECT_VERSION@
 Requires: @DEPS_PKGCONFIG@
-Requires: iodrivers_base
 Libs: -L${libdir} -l@TARGET_NAME@
 Cflags: -I${includedir}
 
