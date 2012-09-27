@@ -137,7 +137,7 @@ int STIM300Driver::extractPacket(const uint8_t* buffer, size_t buffer_size) cons
 	switch(packet_state)
 	{
 	    case 0: //found start of the packet
-		if (buffer[i] == 0x97)
+		if (buffer[i] == this->content)
 		{
 		    start_position = i;
 		    packet_state = 1;
@@ -145,7 +145,7 @@ int STIM300Driver::extractPacket(const uint8_t* buffer, size_t buffer_size) cons
 		break;
 		
 	    case 1: //verify there is another start of the packet afterwards
-		if (buffer[i] == 0x97)
+		if (buffer[i] == this->content)
 		{
 		    if (i == start_position + PACKET_SIZE_RATE_ACC_INCLI_TEMP)
 		    {
@@ -543,6 +543,12 @@ bool STIM300Driver::setAcctoIncrementalVelocity()
 
 }
 
+ACC_OUTPUT STIM300Driver::getAccOutputType()
+{
+    return this->acc_output;
+}
+
+
 Eigen::Vector3d STIM300Driver::getAccData ()
 {
     return Eigen::Vector3d (this->inertial_values.acc[0], this->inertial_values.acc[1], this->inertial_values.acc[2]);
@@ -570,5 +576,21 @@ int STIM300Driver::getPacketCounter()
     return (int) this->inertial_values.counter;
 }
 
+double STIM300Driver::getTempDataX()
+{
+
+    return this->inertial_values.temp[0];
+}
+
+double STIM300Driver::getTempDataY()
+{
+
+    return this->inertial_values.temp[1];
+}
 
 
+double STIM300Driver::getTempDataZ()
+{
+
+    return this->inertial_values.temp[2];
+}

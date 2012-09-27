@@ -20,20 +20,22 @@ namespace stim300
     #define ERROR -1 /** Integer value in order to return when an error occur. */
     #endif
     
+    /** STIM300 state machines modes **/
+    enum STIM300_MODES{INIT, NORMAL, SERVICE};
+    
+    /** STIM300 datagram content **/
+    enum DATAGRAM_CONTENT{RATE = 0x90,
+		    RATE_ACC = 0x91,
+		    RATE_INCLI = 0x92,
+		    RATE_ACC_INCLI_TEMP = 0x97};
+		    
+    /** Accelerometers Type output **/
+    enum ACC_OUTPUT{ACCELERATION, INCREMENTAL_VELOCITY, AVG_ACCELERATION}; // By default it is ACCELERATION but others are possible(read the manual)
+    
 
     class STIM300Driver: public iodrivers_base::Driver
     {
-	/** STIM300 state machines modes **/
-	enum STIM300_MODES{INIT, NORMAL, SERVICE};
 	
-	/** STIM300 datagram content **/
-	enum DATAGRAM_CONTENT{RATE = 0x90,
-			RATE_ACC = 0x91,
-			RATE_INCLI = 0x92,
-			RATE_ACC_INCLI_TEMP = 0x97};
-			
-	/** Accelerometers Type output **/
-	enum ACC_OUTPUT{ACCELERATION, INCREMENTAL_VELOCITY, AVG_ACCELERATION}; // By default it is ACCELERATION but others are possible(read the manual)
 			
 	struct packet
 	{
@@ -143,6 +145,8 @@ namespace stim300
 	     */
 	    bool getStatus();
 	    
+	    stim300::ACC_OUTPUT getAccOutputType();
+	    
 	    /** \brief Return the Incremental counter
 	     * Return the value of the value of the counter in inertial_values
 	     */
@@ -163,6 +167,18 @@ namespace stim300
 	    /** \brief Return the Temperature values
 	     */
 	    Eigen::Vector3d getTempData ();
+	    
+	    /** \brief Return the Temperature value for the X axis
+	     */
+	    double getTempDataX();
+	    
+	    /** \brief Return the Temperature value for the Y axis
+	     */
+	    double getTempDataY();
+	    
+	    /** \brief Return the Temperature value for the Z axis
+	     */
+	    double getTempDataZ();
 	    
 	    
 	    /**
