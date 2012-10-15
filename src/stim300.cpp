@@ -240,23 +240,20 @@ int STIM300Driver::processPacket()
 		
 		if (acc_output == ACCELERATION)
 		{
-		    /** The negative value is because there coordinate frame is worng internaly in the driver **/
-		    this->inertial_values.acc[0] = -convertAcc2Acceleration((buffer+11));
-		    this->inertial_values.acc[1] = -convertAcc2Acceleration((buffer+14));
-		    this->inertial_values.acc[2] = -convertAcc2Acceleration((buffer+17));
+		    this->inertial_values.acc[0] = convertAcc2Acceleration((buffer+11));
+		    this->inertial_values.acc[1] = convertAcc2Acceleration((buffer+14));
+		    this->inertial_values.acc[2] = convertAcc2Acceleration((buffer+17));
 		}
 		else if (acc_output == INCREMENTAL_VELOCITY)
-		{
-		    /** The negative value is because there coordinate frame is worng internaly in the driver **/
-		    this->inertial_values.acc[0] = -convertAcc2IncreVel((buffer+11));
-		    this->inertial_values.acc[1] = -convertAcc2IncreVel((buffer+14));
-		    this->inertial_values.acc[2] = -convertAcc2IncreVel((buffer+17));
+		{  
+		    this->inertial_values.acc[0] = convertAcc2IncreVel((buffer+11));
+		    this->inertial_values.acc[1] = convertAcc2IncreVel((buffer+14));
+		    this->inertial_values.acc[2] = convertAcc2IncreVel((buffer+17));
 		}
 		
-		/** The negative value is because there coordinate frame is worng internaly in the driver **/
-		this->inertial_values.incl[0] = -convertIncl2Acceleration((buffer+21));
-		this->inertial_values.incl[1] = -convertIncl2Acceleration((buffer+24));
-		this->inertial_values.incl[2] = -convertIncl2Acceleration((buffer+27));
+		this->inertial_values.incl[0] = convertIncl2Acceleration((buffer+21));
+		this->inertial_values.incl[1] = convertIncl2Acceleration((buffer+24));
+		this->inertial_values.incl[2] = convertIncl2Acceleration((buffer+27));
 		
 		this->inertial_values.temp[0] = convertTemp2Celsius((buffer+31));
 		this->inertial_values.temp[1] = convertTemp2Celsius((buffer+33));
