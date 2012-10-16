@@ -126,6 +126,12 @@ namespace stim300
 	    /** Closes the device */
 	    bool close();
 	    
+	    /** \brief It gets the file descriptor (fd)
+	     * 
+	     * @return int fd
+	     */
+	    int getFileDescriptor();
+	    
 	    /** \brief read the package and and puts the data into the corresponding structures. *
 	     */
 	    int processPacket();

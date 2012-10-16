@@ -98,6 +98,11 @@ bool STIM300Driver::close()
     return true;
 }
 
+int STIM300Driver::getFileDescriptor()
+{
+    return Driver::getFileDescriptor();
+}
+
 
 int STIM300Driver::extractPacket(const uint8_t* buffer, size_t buffer_size) const
 {
