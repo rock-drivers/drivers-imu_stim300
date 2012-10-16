@@ -103,6 +103,12 @@ int STIM300Driver::getFileDescriptor()
     return Driver::getFileDescriptor();
 }
 
+void STIM300Driver::setPackageTimeout(uint64_t timeoutMilliSeconds)
+{
+    this->pckgTimeout = timeoutMilliSeconds;
+}
+
+
 
 int STIM300Driver::extractPacket(const uint8_t* buffer, size_t buffer_size) const
 {
@@ -212,7 +218,7 @@ int STIM300Driver::processPacket()
 //     std::cout<<"processPacket\n";
 
     try {
-        buf_size = Driver::readPacket (this->buffer, MAX_PACKET_SIZE, 0);
+        buf_size = Driver::readPacket (this->buffer, MAX_PACKET_SIZE, this->pckgTimeout);
     } catch (iodrivers_base::TimeoutError& e ) { 
 	std::cerr<<"TimeoutError\n";
 	return ERROR;

@@ -88,6 +88,7 @@ namespace stim300
 	    static const double STIM300_GRAVITY = 9.80665; // Internal definition of the standard gravity in the STIM300 
 
 	    int	baudrate; /** Packager baud rate **/
+	    uint64_t pckgTimeout; /** Estimate time to have a whole package **/
 	    uint8_t prev_counter; /** Counter is incremented by 9 units; Here the previous to the current packge is saved **/
 	    uint8_t buffer[MAX_PACKET_SIZE]; /** Buffer with the current packeg **/
 	    packet *currentP; /** Pointer to the current packet (to buffer) **/
@@ -131,6 +132,13 @@ namespace stim300
 	     * @return int fd
 	     */
 	    int getFileDescriptor();
+	    
+	    /** \brief Ste the package Timeout
+	     * 
+	     * Expected time to have a whole package
+	     * 
+	     */
+	    void setPackageTimeout(uint64_t timeoutMilliSeconds);
 	    
 	    /** \brief read the package and and puts the data into the corresponding structures. *
 	     */
