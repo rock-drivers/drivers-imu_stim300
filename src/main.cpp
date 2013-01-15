@@ -90,7 +90,7 @@ int signal_set (int sig,handling_t pfunc,void *values)
 	htab[sig] = pfunc;
 	data[sig] = values;
 	if ((signal (sig,generic_handling))==SIG_ERR)
-	 return ERROR;
+	 return ERROR_OUT;
 	return OK;
 }
 

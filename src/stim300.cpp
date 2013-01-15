@@ -221,7 +221,7 @@ int STIM300Driver::processPacket()
         buf_size = Driver::readPacket (this->buffer, MAX_PACKET_SIZE, this->pckgTimeout);
     } catch (iodrivers_base::TimeoutError& e ) { 
 	std::cerr<<"TimeoutError\n";
-	return ERROR;
+	return ERROR_OUT;
     }
     
 //     std::cout<<"buf_size: "<<buf_size<<"\n";
@@ -291,7 +291,7 @@ int STIM300Driver::processPacket()
     }
     
     
-    return ERROR;
+    return ERROR_OUT;
 
 }
 
