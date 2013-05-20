@@ -88,7 +88,7 @@ bool STIM300Driver::setBaudrate(int brate)
 
     this->baudrate = brate;
     
-    return OK;
+    return true;
 }
 
 
@@ -221,7 +221,7 @@ int STIM300Driver::processPacket()
         buf_size = Driver::readPacket (this->buffer, MAX_PACKET_SIZE, this->pckgTimeout);
     } catch (iodrivers_base::TimeoutError& e ) { 
 	std::cerr<<"TimeoutError\n";
-	return ERROR_OUT;
+	return false;
     }
     
 //     std::cout<<"buf_size: "<<buf_size<<"\n";
@@ -272,7 +272,7 @@ int STIM300Driver::processPacket()
 		
 		this->inertial_values.latency = convertLatency2Microseconds((buffer+39));
 		
-		return OK;
+		return true;
 // 	    }
 // 	    else
 // 	    {
@@ -286,12 +286,12 @@ int STIM300Driver::processPacket()
     {
 	std::string s(this->buffer, this->buffer + sizeof(this->buffer));
 	std::cout<<s<<"\n";
-	return OK;
+	return true;
 	
     }
     
     
-    return ERROR_OUT;
+    return false;
 
 }
 

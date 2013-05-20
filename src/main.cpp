@@ -84,14 +84,14 @@ static void generic_handling (int sig)
 * @return OK is everything all right. ERROR on other cases
 *
 */
-int signal_set (int sig,handling_t pfunc,void *values)
+bool signal_set (int sig,handling_t pfunc,void *values)
 {
 
 	htab[sig] = pfunc;
 	data[sig] = values;
 	if ((signal (sig,generic_handling))==SIG_ERR)
-	 return ERROR_OUT;
-	return OK;
+	 return false;
+	return true;
 }
 
 
@@ -115,21 +115,21 @@ int signal_set (int sig,handling_t pfunc,void *values)
 * @return OK is everything all right. ERROR in other cases
 *
 */
-int signal_catcher (int sig_1,int sig_2,int sig_3, int sig_4, handling_t pfunc, void *values)
+bool signal_catcher (int sig_1,int sig_2,int sig_3, int sig_4, handling_t pfunc, void *values)
 {
-	int status=OK;
+	bool status=true;
 
 	status=signal_set (sig_1,pfunc,values);
 
-	if (status==OK)
+	if (status)
 
 	status=signal_set (sig_2,pfunc,values);
 
-	if (status==OK)
+	if (status)
 
 	status=signal_set (sig_3,pfunc,values);
 
-	if (status==OK)
+	if (status)
 
 	status=signal_set (sig_4,pfunc,values);
 	
@@ -153,7 +153,7 @@ int signal_catcher (int sig_1,int sig_2,int sig_3, int sig_4, handling_t pfunc, 
  */
 void signal_terminator (int sig, void *values)
 {
-	int status = OK;
+	bool status = true;
 	stim300::STIM300Driver * pdriver;
 
 	pdriver = (stim300::STIM300Driver *) values;

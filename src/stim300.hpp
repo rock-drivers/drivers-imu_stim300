@@ -11,15 +11,6 @@
 
 namespace stim300
 {
-    /** General defines **/
-    #ifndef OK
-    #define OK	0 /** Integer value in order to return when everything is all right. */
-    #endif
-    
-    #ifndef ERROR_OUT
-    #define ERROR_OUT -1 /** Integer value in order to return when an error occur. */
-    #endif
-    
     /** STIM300 state machines modes **/
     enum STIM300_MODES{INIT, NORMAL, SERVICE};
     
