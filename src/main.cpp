@@ -168,11 +168,8 @@ void signal_terminator (int sig, void *values)
 
 
 	
-	if ((status = pdriver->close()))
-	{
-	    std::cout<<"serial port closed correctly.\n";
-	}
-
+        pdriver->close();
+        std::cout<<"serial port closed correctly.\n";
 	
   	exit (status);
 	
