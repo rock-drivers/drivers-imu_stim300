@@ -115,9 +115,6 @@ namespace stim300
 	    /** Performs a full reset of the device. Sending a RESET command */
 	    bool fullReset();
 	    
-	    /** Closes the device */
-	    bool close();
-	    
 	    /** \brief It gets the file descriptor (fd)
 	     * 
 	     * @return int fd

@@ -91,13 +91,6 @@ bool STIM300Driver::setBaudrate(int brate)
     return true;
 }
 
-
-bool STIM300Driver::close()
-{
-    Driver::close();
-    return true;
-}
-
 int STIM300Driver::getFileDescriptor()
 {
     return Driver::getFileDescriptor();
