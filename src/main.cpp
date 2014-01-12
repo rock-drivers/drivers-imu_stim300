@@ -235,47 +235,47 @@ int main(int argc, char** argv)
 //     crc_32.process_bytes(data, data_len);
 //     printf("Checksum: %X \n", crc_32.checksum());
 //     printf("Expected: %X \n", expected);
-//     
-//     
-//     
-//     
+//
+//
+//
+//
 //     // Simulate CRC-CCITT
 //     crc_32 = boost::crc_basic<32> (0x04C11DB7, 0xFFFFFFFF, 0x00, true, true);
 //     crc_32.reset();
 //     crc_32.process_bytes(data, data_len);
 //     printf("Checksum: %X \n", crc_32.checksum());
 //     printf("Expected: %X \n", expected);
-//     
+//
 //     std::cout << "All tests passed." << std::endl;
-//     
+//
 //      // This is "123456789" in ASCII
 //     unsigned char const  data2[] = { 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37,
 //      0x38, 0x39 };
 //     std::size_t const    data2_len = sizeof( data2 ) / sizeof( data2[0] );
-// 
+//
 //     // The expected CRC for the given data
 //     boost::uint16_t const  expected2 = 0x29B1;
-// 
+//
 //     // Simulate CRC-CCITT
 //     boost::crc_basic<16>  crc_ccitt1( 0x1021, 0xFFFF, 0, false, false );
 //     crc_ccitt1.process_bytes( data2, data2_len );
 //      printf("Checksum: %X \n", crc_ccitt1.checksum());
 //     assert( crc_ccitt1.checksum() == expected2 );
-// 
+//
 //     // Repeat with the optimal version (assuming a 16-bit type exists)
 //     boost::crc_optimal<16, 0x1021, 0xFFFF, 0, false, false>  crc_ccitt2;
 //     crc_ccitt2 = std::for_each( data2, data2 + data2_len, crc_ccitt2 );
 //     assert( crc_ccitt2() == expected2 );
-// 
-//     
+//
+//
 //     std::cout << "All tests passed." << std::endl;
 //     return 0;
-    
-    
+
+
     myDriver.welcome();
-    
-    myDriver.setBaudrate(921600);
-    
+
+    myDriver.setBaudrate(iodrivers_base::Driver::SERIAL_921600);
+
 
     if (!myDriver.open(argv[1]))
     {
@@ -283,47 +283,49 @@ int main(int argc, char** argv)
 	perror("errno is");
 	return 1;
     }
-    
+
     myDriver.getInfo();
-    
-    int i = 0;
-    
-    while (true)
-    {
+
+    //int i = 0;
+
+//    while (true)
+//    {
+        usleep(9800);
 	myDriver.processPacket();
 	myDriver.getInfo();
+
 	
- 	usleep (8000);
+// 	usleep (2000);
 // 	if (i == 800)
 // 	{
 // 	    std::cout<<"RESET IN NORMAL MODE\n";
 // 	    myDriver.fullReset();
 // 	}
-// 	
+//	
 // 	if (i == 1600)
 // 	{
 // 	    std::cout<<"ENTER IN SERVICE MODE\n";
 // 	    myDriver.enterServiceMode();
-// 	    
+//
 // 	}
-// 	
+//	
 // 	if (i == 1604)
 // 	{
 // 	    std::cout<<"EXIT SERVICE MODE\n";
 // 	    myDriver.fullReset();
 // 	}
-// 	
+//	
 // 	if (i == 3200)
 // 	{
 // 	    std::cout<<"ACC TO INCREMENTAL VELOCITY\n";
 // 	    myDriver.setAcctoIncrementalVelocity();
 // 	}
-// 	
-	std::cout<<"I: "<<i<<"\n";
-	i++;
+//	
+//	std::cout<<"I: "<<i<<"\n";
+//	i++;
 	
-    }
-    
+//    }
+
     myDriver.close();
 	
     return 0;
