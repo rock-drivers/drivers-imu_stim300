@@ -227,6 +227,10 @@ namespace stim300
 	    */
 	    uint64_t getPacketLatency();
 
+	    /** \brief Return Checksum verification from the last computation
+	     */
+	    bool getChecksumStatus();
+
 	    /**
 	    * Print a welcome to stdout
 	    * \return nothing

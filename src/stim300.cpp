@@ -122,10 +122,10 @@ int STIM300Driver::extractPacket(const uint8_t* buffer, size_t buffer_size) cons
     int packet_state = 0; //0-> no synchronized, 1->Semi synchonized, 2-> package found
     unsigned short start_position = 0;
 
-    std::cout<<"**** extractPacket ****\n";
-    std::cout<<"buffer_size: "<< buffer_size <<"\n";
-    for ( int i=0; i < (int)buffer_size; i++)
-        printf("%X \n", buffer[i]);
+    //std::cout<<"**** extractPacket ****\n";
+    //std::cout<<"buffer_size: "<< buffer_size <<"\n";
+    //for ( int i=0; i < (int)buffer_size; i++)
+    //    printf("%X \n", buffer[i]);
 
     if (this->modes == NORMAL)
     {
@@ -162,8 +162,8 @@ int STIM300Driver::extractPacket(const uint8_t* buffer, size_t buffer_size) cons
         }
 
 
-        std::cout<<"packet_state: "<<packet_state<<"\n";
-        std::cout<<"**** end extractPacket ****\n";
+        //std::cout<<"packet_state: "<<packet_state<<"\n";
+        //std::cout<<"**** end extractPacket ****\n";
 
 
         if (packet_state == 0)
@@ -191,7 +191,7 @@ int STIM300Driver::extractPacket(const uint8_t* buffer, size_t buffer_size) cons
 int STIM300Driver::processPacket()
 {
     int buf_size = 0;
-    std::cout<<"processPacket\n";
+    //std::cout<<"processPacket\n";
 
     try {
         buf_size = Driver::readPacket (this->buffer, MAX_PACKET_SIZE, this->pckgTimeout);
@@ -448,7 +448,7 @@ bool STIM300Driver::verifyChecksum()
         bufferCRC[sizeof(bufferCRC)-(1+i)] = 0x00;
 
     crc_32.process_bytes(bufferCRC, sizeof(bufferCRC));
-    printf("Checksum: %X \n", crc_32.checksum());
+    //printf("Checksum: %X \n", crc_32.checksum());
 
     /** Expected CRC endianness is corrected **/
     uint8_t expectedCRC[sizeof(uint32_t)] = {this->buffer[PACKET_SIZE_RATE_ACC_INCLI_TEMP_CRC-1],
@@ -459,7 +459,7 @@ bool STIM300Driver::verifyChecksum()
     boost::uint32_t expintCRC;
     expintCRC = *(reinterpret_cast<boost::uint32_t*> (expectedCRC));
 
-    printf("exp CRC: %X \n", expintCRC);
+    //printf("exp CRC: %X \n", expintCRC);
     if(crc_32.checksum() == expintCRC)
         return true;
     else
@@ -654,5 +654,9 @@ uint64_t STIM300Driver::getPacketLatency()
     return static_cast<uint64_t>(this->inertial_values.latency);
 }
 
+bool STIM300Driver::getChecksumStatus()
+{
+    return this->inertial_values.checksum;
+}
 
 }
