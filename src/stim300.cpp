@@ -206,6 +206,7 @@ int STIM300Driver::processPacket()
 
     if (this->modes == NORMAL)
     {
+
         /** Verify the Checksum **/
         this->inertial_values.checksum = verifyChecksum();
 
@@ -281,7 +282,6 @@ int STIM300Driver::processPacket()
 	return true;
 	
     }
-
 
     return false;
 
@@ -582,7 +582,7 @@ bool STIM300Driver::setAcctoIncrementalVelocity()
 	
 	return true;
     }
-    
+
     return false;
 
 }
