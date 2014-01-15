@@ -37,7 +37,7 @@ namespace stim300
     class STIM300Driver: public iodrivers_base::Driver
     {
 		
-	struct imu_value
+	struct sensor_value
 	{
 	    signed int value:24;
 	} __attribute__ ((__packed__));
@@ -47,20 +47,20 @@ namespace stim300
 	    signed int value:16;
 	} __attribute__ ((__packed__));
 	
-        struct packet
+        typedef struct
 	{
 	    uint8_t content;
-	    struct imu_value gyro_x;
-	    struct imu_value gyro_y;
-	    struct imu_value gyro_z;
+	    struct sensor_value gyro_x;
+	    struct sensor_value gyro_y;
+	    struct sensor_value gyro_z;
 	    uint8_t gyros_status;
-	    struct imu_value acc_x;
-	    struct imu_value acc_y;
-	    struct imu_value acc_z;
+	    struct sensor_value acc_x;
+	    struct sensor_value acc_y;
+	    struct sensor_value acc_z;
 	    uint8_t acc_status;
-	    struct imu_value incl_x;
-	    struct imu_value incl_y;
-	    struct imu_value incl_z;
+	    struct sensor_value incl_x;
+	    struct sensor_value incl_y;
+	    struct sensor_value incl_z;
 	    uint8_t incl_status;
 	    int16_t gtemp_x;
 	    int16_t gtemp_y;
@@ -78,8 +78,8 @@ namespace stim300
 #endif
             uint8_t counter;
 	    uint16_t latency;
-	    uint32_t checksum;
-	} __attribute__ ((__packed__));
+	    struct sensor_value checksum;
+	}packet;
 
 	typedef struct
 	{

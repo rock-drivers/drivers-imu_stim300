@@ -14,7 +14,7 @@ STIM300Driver::STIM300Driver()
 ,acc_output(ACCELERATION)
 {
 
-    this->currentP = reinterpret_cast<struct packet *>(this->buffer);
+    this->currentP = reinterpret_cast<packet *>(this->buffer);
 
     this->prev_counter = std::numeric_limits<double>::quiet_NaN();
 
@@ -292,7 +292,7 @@ double STIM300Driver::convertGyro2AngularRate(const uint8_t* buffer)
     double gyro_double = std::numeric_limits<double>::quiet_NaN();
     uint8_t copy_buffer[3];
     double twopower14 = 16384;//2^14
-    struct imu_value *gyro_value;
+    struct sensor_value *gyro_value;
 
 
     if (buffer != NULL)
@@ -303,7 +303,7 @@ double STIM300Driver::convertGyro2AngularRate(const uint8_t* buffer)
 	
 // 	printf ("Converting %X %X %X\n", buffer[0], buffer[1], buffer[2]);
 	
-	gyro_value = reinterpret_cast<struct imu_value *>(copy_buffer);
+	gyro_value = reinterpret_cast<struct sensor_value *>(copy_buffer);
 	
 	gyro_double = (double)(gyro_value->value) / twopower14;
 // 	std::cout<<"gyro_double: "<<gyro_double<<"\n";
@@ -324,7 +324,7 @@ double STIM300Driver::convertAcc2Acceleration(const uint8_t* buffer)
     double twopower20 = 1048576;//2^20
 #endif
 
-    struct imu_value *acc_value;
+    struct sensor_value *acc_value;
 
     if (buffer != NULL)
     {
@@ -334,7 +334,7 @@ double STIM300Driver::convertAcc2Acceleration(const uint8_t* buffer)
 	copy_buffer[2] = buffer[0];
 	copy_buffer[1] = buffer[1];
 	copy_buffer[0] = buffer[2];
-	acc_value = reinterpret_cast<struct imu_value *>(copy_buffer);
+	acc_value = reinterpret_cast<struct sensor_value *>(copy_buffer);
 	
 #if STIM300_REV < 'C'
 	acc_double = (double)(acc_value->value) / twopower19;
@@ -356,7 +356,7 @@ double STIM300Driver::convertIncl2Acceleration(const uint8_t* buffer)
     double incl_double = std::numeric_limits<double>::quiet_NaN();
     uint8_t copy_buffer[3];
     double twopower22 = 4194304;//2^22
-    struct imu_value *incl_value;
+    struct sensor_value *incl_value;
 
     if (buffer != NULL)
     {
@@ -366,7 +366,7 @@ double STIM300Driver::convertIncl2Acceleration(const uint8_t* buffer)
 	copy_buffer[2] = buffer[0];
 	copy_buffer[1] = buffer[1];
 	copy_buffer[0] = buffer[2];
-	incl_value = reinterpret_cast<struct imu_value *>(copy_buffer);
+	incl_value = reinterpret_cast<struct sensor_value *>(copy_buffer);
 	
 	incl_double = (double)(incl_value->value) / twopower22;
 // 	std::cout<<"acc_double: "<<acc_double<<"\n";
@@ -381,7 +381,7 @@ double STIM300Driver::convertAcc2IncreVel(const uint8_t* buffer)
     double acc_double = std::numeric_limits<double>::quiet_NaN();
     uint8_t copy_buffer[3];
     double twopower22 = 4194304;//2^22
-    struct imu_value *acc_value;
+    struct sensor_value *acc_value;
 
     if (buffer != NULL)
     {
@@ -391,7 +391,7 @@ double STIM300Driver::convertAcc2IncreVel(const uint8_t* buffer)
 	copy_buffer[2] = buffer[0];
 	copy_buffer[1] = buffer[1];
 	copy_buffer[0] = buffer[2];
-	acc_value = reinterpret_cast<struct imu_value *>(copy_buffer);
+	acc_value = reinterpret_cast<struct sensor_value *>(copy_buffer);
 	
 	acc_double = (double)(acc_value->value) / twopower22;
 // 	std::cout<<"acc_double: "<<acc_double<<"\n";
