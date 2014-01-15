@@ -4,7 +4,8 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <sys/types.h>
-#include <stim300/stim300.hpp>
+#include <stim300/Stim300RevD.hpp>
+#include <stim300/Stim300RevB.hpp>
 
 
 using namespace std;
@@ -154,9 +155,9 @@ bool signal_catcher (int sig_1,int sig_2,int sig_3, int sig_4, handling_t pfunc,
 void signal_terminator (int sig, void *values)
 {
 	bool status = true;
-	stim300::STIM300Driver * pdriver;
+	stim300::Stim300Base * pdriver;
 
-	pdriver = (stim300::STIM300Driver *) values;
+	pdriver = (stim300::Stim300Base *) values;
 
 	if (sig == SIGINT)
 		std::cout<< "\nSIGINT: Terminal interrupt\n";
@@ -177,7 +178,8 @@ void signal_terminator (int sig, void *values)
 
 int main(int argc, char** argv)
 {
-    stim300::STIM300Driver myDriver;
+    stim300::Stim300RevD myDriverRevD;
+    stim300::Stim300RevB myDriverRevB;
     handling_t pfunc;
 	
     if (argc<2)
@@ -185,50 +187,44 @@ int main(int argc, char** argv)
 	printf( "Usage: stim300_bin <device>\n");
 	return 0;
     }
-    
+
         /* Function signal handling */
     pfunc = signal_terminator;
-    
+
     /* Catching system signals */
-    signal_catcher (SIGHUP,SIGINT,SIGTERM, SIGSEGV, pfunc, &myDriver);
-    
+    signal_catcher (SIGHUP,SIGINT,SIGTERM, SIGSEGV, pfunc, &myDriverRevD);
+
 //     ******************************************
     // This is "123456789" in ASCII
 //     unsigned char const  data[] = { 0x97, 0x00, 0x01, 0x37, 0x00, 0x01, 0xc7, 0xff, 0xfe, 0x74,
 //      0x00, 0x00, 0x06, 0x32, 0x00, 0x11, 0xad, 0x07, 0xf4, 0x45, 0x00, 0xff, 0xec, 0xbc, 0x00, 0x37, 0x93, 0x40, 0x06, 0x2a, 0x00,
 //      0x20, 0x4f, 0x20, 0x69, 0x20, 0x55, 0x00, 0xd9, 0x03, 0xf8};
 //     std::size_t const    data_len = sizeof( data ) / sizeof( data[0] );
-// 
-//     
+
+
 //     for (int i=0; i<(int)sizeof(data);i++)
 //     {
 // 	printf("%X \n", data[i]);
 //     }
 //     std::cout<<"Size of data: "<< sizeof(data)<<"\n";
 //     std::cout<<"Size of data: "<< sizeof(data)/sizeof(data[0])<<"\n";
-//     
+
 //     // The expected CRC for the given data
 //     boost::uint32_t const  expected = 0x21c1e045;
-//     
+
 //     // Simulate CRC-CCITT
 //     boost::crc_basic<32>  crc_32(0x04C11DB7, 0xFFFFFFFF, 0x00, false, false);
 //     crc_32.process_bytes(data, data_len);
 //     printf("Checksum: %X \n", crc_32.checksum());
 //     printf("Expected: %X \n", expected);
-// 
-//     
-//     
-//     
+//
 //     // Simulate CRC-CCITT
 //     crc_32 =  boost::crc_basic<32> (0x04C11DB7, 0xFFFFFFFF, 0x00, true, false);
 //     crc_32.reset();
 //     crc_32.process_bytes(data, data_len);
 //     printf("Checksum: %X \n", crc_32.checksum());
 //     printf("Expected: %X \n", expected);
-//     
-//     
-//     
-//     
+//
 //     // Simulate CRC-CCITT
 //     crc_32 = boost::crc_basic<32> (0x04C11DB7, 0xFFFFFFFF, 0x00, false, true);
 //     crc_32.reset();
@@ -272,53 +268,53 @@ int main(int argc, char** argv)
 //     return 0;
 
 
-    myDriver.welcome();
+    myDriverRevD.welcome();
 
-    myDriver.setBaudrate(iodrivers_base::Driver::SERIAL_921600);
+    myDriverRevD.setBaudrate(iodrivers_base::Driver::SERIAL_921600);
 
 
-    if (!myDriver.open(argv[1]))
+    if (!myDriverRevD.open(argv[1]))
     {
 	cerr << "cannot open device: " << argv[1] << endl;
 	perror("errno is");
 	return 1;
     }
 
-    myDriver.getInfo();
+    myDriverRevD.printInfo();
 
     //int i = 0;
 
 //    while (true)
 //    {
         usleep(9800);
-	myDriver.processPacket();
-	myDriver.getInfo();
+	myDriverRevD.processPacket();
+	myDriverRevD.printInfo();
 
 	
 // 	usleep (2000);
 // 	if (i == 800)
 // 	{
 // 	    std::cout<<"RESET IN NORMAL MODE\n";
-// 	    myDriver.fullReset();
+// 	    myDriverRevD.fullReset();
 // 	}
 //	
 // 	if (i == 1600)
 // 	{
 // 	    std::cout<<"ENTER IN SERVICE MODE\n";
-// 	    myDriver.enterServiceMode();
+// 	    myDriverRevD.enterServiceMode();
 //
 // 	}
 //	
 // 	if (i == 1604)
 // 	{
 // 	    std::cout<<"EXIT SERVICE MODE\n";
-// 	    myDriver.fullReset();
+// 	    myDriverRevD.fullReset();
 // 	}
 //	
 // 	if (i == 3200)
 // 	{
 // 	    std::cout<<"ACC TO INCREMENTAL VELOCITY\n";
-// 	    myDriver.setAcctoIncrementalVelocity();
+// 	    myDriverRevD.setAcctoIncrementalVelocity();
 // 	}
 //	
 //	std::cout<<"I: "<<i<<"\n";
@@ -326,7 +322,7 @@ int main(int argc, char** argv)
 	
 //    }
 
-    myDriver.close();
+    myDriverRevD.close();
 	
     return 0;
 }
