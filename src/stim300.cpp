@@ -14,7 +14,7 @@ STIM300Driver::STIM300Driver()
 ,acc_output(ACCELERATION)
 {
 
-    this->currentP = reinterpret_cast<packet *>(this->buffer);
+    this->currentP = reinterpret_cast<struct packet *>(this->buffer);
 
     this->prev_counter = std::numeric_limits<double>::quiet_NaN();
 
@@ -122,10 +122,10 @@ int STIM300Driver::extractPacket(const uint8_t* buffer, size_t buffer_size) cons
     int packet_state = 0; //0-> no synchronized, 1->Semi synchonized, 2-> package found
     unsigned short start_position = 0;
 
-    //std::cout<<"**** extractPacket ****\n";
-    //std::cout<<"buffer_size: "<< buffer_size <<"\n";
-    //for ( int i=0; i < (int)buffer_size; i++)
-    //    printf("%X \n", buffer[i]);
+//    std::cout<<"**** extractPacket ****\n";
+//    std::cout<<"buffer_size: "<< buffer_size <<"\n";
+//    for ( int i=0; i < (int)buffer_size; i++)
+//        printf("%X \n", buffer[i]);
 
     if (this->modes == NORMAL)
     {
@@ -162,8 +162,8 @@ int STIM300Driver::extractPacket(const uint8_t* buffer, size_t buffer_size) cons
         }
 
 
-        //std::cout<<"packet_state: "<<packet_state<<"\n";
-        //std::cout<<"**** end extractPacket ****\n";
+//        std::cout<<"packet_state: "<<packet_state<<"\n";
+//        std::cout<<"**** end extractPacket ****\n";
 
 
         if (packet_state == 0)
@@ -440,11 +440,11 @@ bool STIM300Driver::verifyChecksum()
     boost::crc_basic<32>  crc_32(0x04C11DB7, 0xFFFFFFFF, 0x00, false, false);
 
     /** Here the variable buffer is the global variable **/
-    uint8_t bufferCRC[PACKET_SIZE_RATE_ACC_INCLI_TEMP_CRC-sizeof(uint32_t)+NUMBER_DUMMY_BYTES];
+    uint8_t bufferCRC[PACKET_SIZE_RATE_ACC_INCLI_TEMP_CRC-sizeof(uint32_t)+NUMBER_PADDING_BYTES];
     std::copy (this->buffer, this->buffer+sizeof(bufferCRC), bufferCRC);
 
     /** Fill the Dummy bytes with 0x00. There are at the end of the buffer **/
-    for (size_t i=0; i<NUMBER_DUMMY_BYTES; ++i)
+    for (size_t i=0; i<NUMBER_PADDING_BYTES; ++i)
         bufferCRC[sizeof(bufferCRC)-(1+i)] = 0x00;
 
     crc_32.process_bytes(bufferCRC, sizeof(bufferCRC));

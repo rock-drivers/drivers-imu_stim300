@@ -47,7 +47,7 @@ namespace stim300
 	    signed int value:16;
 	} __attribute__ ((__packed__));
 	
-        typedef struct
+        struct packet
 	{
 	    uint8_t content;
 	    struct sensor_value gyro_x;
@@ -78,8 +78,8 @@ namespace stim300
 #endif
             uint8_t counter;
 	    uint16_t latency;
-	    struct sensor_value checksum;
-	}packet;
+	    uint32_t checksum;
+	} __attribute__ ((__packed__)); //very important to do not align with architecture words
 
 	typedef struct
 	{
@@ -95,14 +95,14 @@ namespace stim300
 	}sensor_values;
 	
 	private:
-#if STIM300_REV < 'C'
+#if STIM300_REV <= 'C'
 	    static const unsigned int PACKET_SIZE_RATE_ACC_INCLI_TEMP_CRC = 45;// Size until CRC (AUX is not in the datagram)
-	    static const unsigned int NUMBER_DUMMY_BYTES = 3; //Number of dummy-bytes to be added for CRC-calculation (see Table 6.15 of the manual)
+	    static const unsigned int NUMBER_PADDING_BYTES = 3; //Number of dummy-bytes to be added for CRC-calculation (see Table 6.15 of the manual)
 #else
 	    static const unsigned int PACKET_SIZE_RATE_ACC_INCLI_TEMP_CRC = 59;// Size until CRC (AUX is not in the datagram)
-	    static const unsigned int NUMBER_DUMMY_BYTES = 1; //Number of dummy-bytes to be added for CRC-calculation (see Table 6.15 of the manual)
+	    static const unsigned int NUMBER_PADDING_BYTES = 1; //Number of dummy-bytes to be added for CRC-calculation (see Table 6.15 of the manual)
 #endif
-	    static const unsigned int MAX_PACKET_SIZE = 2*PACKET_SIZE_RATE_ACC_INCLI_TEMP_CRC;
+	    static const unsigned int MAX_PACKET_SIZE = 2 * sizeof(struct packet);
 	    static const double STIM300_GRAVITY = 9.80665; // Internal definition of the standard gravity in the STIM300 
 
 
