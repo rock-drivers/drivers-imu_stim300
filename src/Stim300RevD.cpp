@@ -131,7 +131,7 @@ int Stim300RevD::processPacket()
         //std::cout<<"sizeof(buffer): "<<sizeof(buffer)<<"\n";
 
         /** Verify the Checksum **/
-        this->inertial_values.checksum = verifyChecksum();
+        this->inertial_values.checksum = verifyChecksum(this->expectedCRC, this->calculatedCRC);
 
         //if ((this->currentP->acc_status + this->currentP->gyros_status + this->currentP->incl_status) == 0)
         //{
@@ -226,6 +226,9 @@ void Stim300RevD::printInfo()
     std::cout<<"Acc Temperature[Celsius]: "<<this->inertial_values.temp[3]<<" "<<this->inertial_values.temp[4]<<" "<<this->inertial_values.temp[5]<<"\n";
     std::cout<<"Incl Temperature[Celsius]: "<<this->inertial_values.temp[6]<<" "<<this->inertial_values.temp[7]<<" "<<this->inertial_values.temp[8]<<"\n";
     std::cout<<"Latency[microsecond]: "<<this->inertial_values.latency<<"\n";
+    printf("Checksum: %X [%X]\n", this->calculatedCRC, this->expectedCRC);
+    std::cout<<"*********************************\n";
+
 }
 
 double Stim300RevD::convertAcc2Acceleration(const uint8_t* buffer)
@@ -257,7 +260,7 @@ double Stim300RevD::convertAcc2Acceleration(const uint8_t* buffer)
 
 }
 
-bool Stim300RevD::verifyChecksum()
+bool Stim300RevD::verifyChecksum(boost::uint32_t &expintCRC, boost::uint32_t &calintCRC)
 {
     boost::crc_basic<32>  crc_32(0x04C11DB7, 0xFFFFFFFF, 0x00, false, false);
 
@@ -272,18 +275,22 @@ bool Stim300RevD::verifyChecksum()
     crc_32.process_bytes(bufferCRC, sizeof(bufferCRC));
     //printf("Checksum: %X \n", crc_32.checksum());
 
+    /** Calculated CRC **/
+    calintCRC = crc_32.checksum();
+
     /** Expected CRC endianness is corrected **/
     uint8_t expectedCRC[sizeof(uint32_t)] = {this->buffer[sizeof(struct packet)-1],
                                              this->buffer[sizeof(struct packet)-2],
                                              this->buffer[sizeof(struct packet)-3],
                                              this->buffer[sizeof(struct packet)-4]};
 
-    boost::uint32_t expintCRC;
     expintCRC = *(reinterpret_cast<boost::uint32_t*> (expectedCRC));
 
     //printf("exp CRC: %X \n", expintCRC);
-    if(crc_32.checksum() == expintCRC)
+    if(calintCRC == expintCRC)
+    {
         return true;
+    }
     else
         return false;
 

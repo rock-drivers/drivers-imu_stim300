@@ -64,6 +64,7 @@ namespace stim300
 	    bool internal_error; /** If Acc, Gyros or Incl report error it would be true (false by default)**/
             stim300::DATAGRAM_CONTENT content; /** Content of the datagram (package) configuration NOTE: So far only RATE_ACC_INCLI_TEMP is implemented **/
 	    ACC_OUTPUT acc_output; /** Type of values returned by the STIM300. By defaults it is Acceleration in m/s^2 **/
+            boost::uint32_t expectedCRC, calculatedCRC; /* Expected and calculated checksum value **/
 
 	public:
 

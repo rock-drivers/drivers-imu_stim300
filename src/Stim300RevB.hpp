@@ -64,7 +64,7 @@ namespace stim300
 
             double convertAcc2Acceleration(uint8_t const* buffer);
 
-            bool verifyChecksum();
+            bool verifyChecksum(boost::uint32_t &expintCRC, boost::uint32_t &calintCRC);
     };
 }
 #endif
