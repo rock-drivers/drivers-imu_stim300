@@ -27,9 +27,9 @@ namespace stim300
     /** Accelerometers Type output **/
     enum ACC_OUTPUT{ACCELERATION, INCREMENTAL_VELOCITY, AVG_ACCELERATION}; // By default it is ACCELERATION but others are possible(read the manual)
 
-    static const double STIM300_GRAVITY = 9.80665; // Internal definition of the standard gravity in the STIM300 
+    static const double STIM300_GRAVITY = 9.80665; // Internal definition of the standard gravity in the STIM300
 
-    static const unsigned int DEFAULT_SAMPLING_FREQUENCY = 500; //Selected by default as frequency in the firmware (It has been changes, by manufacture the default was 2000)
+    static const unsigned int DEFAULT_SAMPLING_FREQUENCY = 2000; //Selected by default as frequency in the firmware
 
     class Stim300Base: public iodrivers_base::Driver
     {
