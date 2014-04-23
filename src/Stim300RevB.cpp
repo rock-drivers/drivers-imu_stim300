@@ -12,6 +12,8 @@ Stim300RevB::Stim300RevB()
 
     this->prev_counter = std::numeric_limits<double>::quiet_NaN();
 
+    this->counter_ratio = stim300::DEFAULT_SAMPLING_FREQUENCY/this->sampling_frequency;
+
     this->inertial_values.counter = 0;
     this->inertial_values.acc[0] = std::numeric_limits<double>::quiet_NaN();
     this->inertial_values.acc[1] = std::numeric_limits<double>::quiet_NaN();
@@ -142,7 +144,7 @@ int Stim300RevB::processPacket()
                 prev_counter = this->currentP->counter;
             else
             {
-                this->inertial_values.counter += (this->currentP->counter - prev_counter)% 0x07;
+                this->inertial_values.counter += (this->currentP->counter - prev_counter)%this->counter_ratio;
                 prev_counter = this->currentP->counter;
             }
 

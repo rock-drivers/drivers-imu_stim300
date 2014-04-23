@@ -57,6 +57,8 @@ namespace stim300
             }sensor_values;
 
 	    int	baudrate; /** Package baud rate **/
+	    int sampling_frequency; /** Sampling Frequency**/
+	    int counter_ratio; /** Packet counter ratio **/
             base::Time pckgTimeout; /** Estimate time to have a whole package **/
 	    uint8_t prev_counter; /** Counter is incremented by 9 units; Here the previous to the current packge is saved **/
 	    sensor_values inertial_values; /** Struct with the processes STIM300 values **/
@@ -117,6 +119,13 @@ namespace stim300
 	     * Expected time to have a whole package
 	     */
 	    void setPackageTimeout(uint64_t timeoutMilliSeconds);
+
+             /** \brief Ste the driver sampling frequency
+	     *
+	     * Expected frequency (normally connected to timeout)
+	     */
+
+            void setFrequency (int sampling_frequency);
 
         public:
 	    /** \brief Return the STIM300 internal status

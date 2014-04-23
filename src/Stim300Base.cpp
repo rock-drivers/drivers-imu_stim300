@@ -5,6 +5,7 @@ using namespace stim300;
 Stim300Base::Stim300Base(int max_packet_size)
 :Driver(max_packet_size)
 ,baudrate(iodrivers_base::Driver::SERIAL_921600)
+,sampling_frequency(stim300::DEFAULT_SAMPLING_FREQUENCY)
 ,modes(NORMAL)
 ,internal_error(false)
 ,acc_output(ACCELERATION)
@@ -158,6 +159,13 @@ bool Stim300Base::setAcctoIncrementalVelocity()
 void Stim300Base::setPackageTimeout(uint64_t timeoutMilliSeconds)
 {
     this->pckgTimeout = base::Time::fromMilliseconds(timeoutMilliSeconds);
+}
+
+void Stim300Base::setFrequency (int sampling_frequency)
+{
+    this->sampling_frequency = sampling_frequency;
+    this->counter_ratio = stim300::DEFAULT_SAMPLING_FREQUENCY / this->sampling_frequency;
+    this->counter_ratio--;
 }
 
 bool Stim300Base::getStatus()
