@@ -1,6 +1,6 @@
 #include "Stim300RevB.hpp"
 
-using namespace stim300;
+using namespace imu_stim300;
 
 Stim300RevB::Stim300RevB()
 :Stim300Base(MAX_PACKET_SIZE)
@@ -12,7 +12,7 @@ Stim300RevB::Stim300RevB()
 
     this->prev_counter = std::numeric_limits<double>::quiet_NaN();
 
-    this->counter_ratio = stim300::DEFAULT_SAMPLING_FREQUENCY/this->sampling_frequency;
+    this->counter_ratio = imu_stim300::DEFAULT_SAMPLING_FREQUENCY/this->sampling_frequency;
 
     this->inertial_values.counter = 0;
     this->inertial_values.acc[0] = std::numeric_limits<double>::quiet_NaN();

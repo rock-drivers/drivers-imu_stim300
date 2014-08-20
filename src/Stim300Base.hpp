@@ -10,7 +10,7 @@
 #include <iodrivers_base/Driver.hpp>
 #include <base/Time.hpp>
 
-namespace stim300
+namespace imu_stim300
 {
     /** STIM300 state machines modes **/
     enum STIM300_MODES{INIT, NORMAL, SERVICE};
@@ -64,7 +64,7 @@ namespace stim300
 	    sensor_values inertial_values; /** Struct with the processes STIM300 values **/
 	    STIM300_MODES modes; /** The three states of the automata of the STIM300 **/
 	    bool internal_error; /** If Acc, Gyros or Incl report error it would be true (false by default)**/
-            stim300::DATAGRAM_CONTENT content; /** Content of the datagram (package) configuration NOTE: So far only RATE_ACC_INCLI_TEMP is implemented **/
+            imu_stim300::DATAGRAM_CONTENT content; /** Content of the datagram (package) configuration NOTE: So far only RATE_ACC_INCLI_TEMP is implemented **/
 	    ACC_OUTPUT acc_output; /** Type of values returned by the STIM300. By defaults it is Acceleration in m/s^2 **/
             boost::uint32_t expectedCRC, calculatedCRC; /* Expected and calculated checksum value **/
 
@@ -141,7 +141,7 @@ namespace stim300
 
             /**@brief Get Accelerometer Output Mode
              */
-	    stim300::ACC_OUTPUT getAccOutputType();
+	    imu_stim300::ACC_OUTPUT getAccOutputType();
 
 	    /** \brief Return the Incremental counter
 	     * Return the value of the value of the counter in inertial_values

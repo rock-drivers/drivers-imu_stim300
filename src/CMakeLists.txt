@@ -1,6 +1,6 @@
 rock_find_pkgconfig(Eigen3 eigen3 REQUIRED)
 
-rock_library(stim300
+rock_library(imu_stim300
     SOURCES Stim300Base.cpp
             Stim300RevD.cpp
             Stim300RevB.cpp
@@ -9,7 +9,7 @@ rock_library(stim300
             Stim300RevB.hpp
     DEPS_PKGCONFIG iodrivers_base)
 
-rock_executable(stim300_bin main.cpp
-    DEPS stim300
+rock_executable(imu_stim300_bin main.cpp
+    DEPS imu_stim300
     DEPS_PKGCONFIG iodrivers_base)
 

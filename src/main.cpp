@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <sys/types.h>
-#include <stim300/Stim300RevD.hpp>
-#include <stim300/Stim300RevB.hpp>
+#include <imu_stim300/Stim300RevD.hpp>
+#include <imu_stim300/Stim300RevB.hpp>
 
 
 using namespace std;
@@ -155,9 +155,9 @@ bool signal_catcher (int sig_1,int sig_2,int sig_3, int sig_4, handling_t pfunc,
 void signal_terminator (int sig, void *values)
 {
 	bool status = true;
-	stim300::Stim300Base * pdriver;
+	imu_stim300::Stim300Base * pdriver;
 
-	pdriver = (stim300::Stim300Base *) values;
+	pdriver = (imu_stim300::Stim300Base *) values;
 
 	if (sig == SIGINT)
 		std::cout<< "\nSIGINT: Terminal interrupt\n";
@@ -178,13 +178,13 @@ void signal_terminator (int sig, void *values)
 
 int main(int argc, char** argv)
 {
-    stim300::Stim300RevD myDriverRevD;
-    stim300::Stim300RevB myDriverRevB;
+    imu_stim300::Stim300RevD myDriverRevD;
+    imu_stim300::Stim300RevB myDriverRevB;
     handling_t pfunc;
 	
     if (argc<2)
     {
-	printf( "Usage: stim300_bin <device>\n");
+	printf( "Usage: imu_stim300_bin <device>\n");
 	return 0;
     }
 

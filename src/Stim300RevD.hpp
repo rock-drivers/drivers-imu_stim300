@@ -3,9 +3,9 @@
 
 #include "Stim300Base.hpp"
 
-namespace stim300
+namespace imu_stim300
 {
-    class Stim300RevD: public stim300::Stim300Base
+    class Stim300RevD: public imu_stim300::Stim300Base
     {
         private:
             /** Datagram for the Stim300 Revision D **/
