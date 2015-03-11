@@ -156,9 +156,9 @@ bool Stim300Base::setAcctoIncrementalVelocity()
 
 }
 
-void Stim300Base::setPackageTimeout(uint64_t timeoutMilliSeconds)
+void Stim300Base::setPackageTimeout(int64_t timeoutSeconds)
 {
-    this->pckgTimeout = base::Time::fromMilliseconds(timeoutMilliSeconds);
+    this->pckgTimeout = base::Time::fromSeconds(timeoutSeconds);
 }
 
 void Stim300Base::setFrequency (int sampling_frequency)

@@ -114,18 +114,18 @@ namespace imu_stim300
 	     */
 	    bool setAcctoIncrementalVelocity();
 
-            /** \brief Ste the package Timeout
+        /** \brief Ste the package Timeout
 	     *
 	     * Expected time to have a whole package
 	     */
-	    void setPackageTimeout(uint64_t timeoutMilliSeconds);
+	    void setPackageTimeout(int64_t timeouSeconds);
 
-             /** \brief Ste the driver sampling frequency
+        /** \brief Ste the driver sampling frequency
 	     *
 	     * Expected frequency (normally connected to timeout)
 	     */
 
-            void setFrequency (int sampling_frequency);
+        void setFrequency (int sampling_frequency);
 
         public:
 	    /** \brief Return the STIM300 internal status
