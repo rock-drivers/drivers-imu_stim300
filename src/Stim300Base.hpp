@@ -59,7 +59,7 @@ namespace imu_stim300
 	    int	baudrate; /** Package baud rate **/
 	    int sampling_frequency; /** Sampling Frequency**/
 	    int counter_ratio; /** Packet counter ratio **/
-            base::Time pckgTimeout; /** Estimate time to have a whole package **/
+        base::Time pckgTimeout; /** Estimate time to have a whole package **/
 	    uint8_t prev_counter; /** Counter is incremented by 9 units; Here the previous to the current packge is saved **/
 	    sensor_values inertial_values; /** Struct with the processes STIM300 values **/
 	    STIM300_MODES modes; /** The three states of the automata of the STIM300 **/
@@ -118,7 +118,7 @@ namespace imu_stim300
 	     *
 	     * Expected time to have a whole package
 	     */
-	    void setPackageTimeout(int64_t timeouSeconds);
+	    void setPackageTimeout(double timeoutSeconds);
 
         /** \brief Ste the driver sampling frequency
 	     *

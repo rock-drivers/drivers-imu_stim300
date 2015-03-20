@@ -156,7 +156,7 @@ bool Stim300Base::setAcctoIncrementalVelocity()
 
 }
 
-void Stim300Base::setPackageTimeout(int64_t timeoutSeconds)
+void Stim300Base::setPackageTimeout(double timeoutSeconds)
 {
     this->pckgTimeout = base::Time::fromSeconds(timeoutSeconds);
 }
